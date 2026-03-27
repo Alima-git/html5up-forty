@@ -3,41 +3,35 @@ name: CI-CD Docker Pipeline
 on:
   push:
     branches:
-      - [cite_start]main # Objectif 1 : s'exécuter sur main [cite: 5]
-
-env:
-  IMAGE_NAME: ci-html
-  IMAGE_TAG: 1.0.1
+      - main
+      - trivy
 
 jobs:
-  # Étape 1 : Construction locale (sans Docker Hub pour l'instant)
   ci:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-      - name: Build Docker image locally
-        run: docker build -t $IMAGE_NAME:$IMAGE_TAG . # Objectif 2 : corriger le build [cite: 6]
+      - name: Build Docker image
+        run: docker build -t ci-html:1.0.1 .
 
-  # Étape 2 (Bonus) : Scan de sécurité [cite: 7, 11]
   scan-trivy:
     needs: ci
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Run Trivy vulnerability scanner
+      - name: Run Trivy scanner
         uses: aquasecurity/trivy-action@0.20.0
         with:
-          image-ref: 'ci-html:1.0.1'
-          format: 'table'
-          [cite_start]exit-code: 1 # Assure la sécurité avant déploiement [cite: 7, 11]
-          severity: 'CRITICAL,HIGH'
+          image-ref: "ci-html:1.0.1"
+          format: "table"
+          exit-code: 1
+          severity: "CRITICAL,HIGH"
 
-  # Étape 3 : Déploiement simulé
   deploy:
-    [cite_start]needs: scan-trivy # Objectif : après le scan [cite: 11]
+    needs: scan-trivy
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy
-        run: echo "Déploiement réussi après scan de sécurité !"
+      - name: Final Deploy
+        run: echo "D�ploiement r�ussi apr�s scan !"
