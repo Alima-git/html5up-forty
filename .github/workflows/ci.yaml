@@ -1,9 +1,9 @@
-name: CI-CD Pipeline Main
+name: CI-CD Pipeline Final
 
 on:
   push:
     branches:
-      - main
+      - final
 
 jobs:
   ci:
@@ -30,4 +30,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Final Deploy
-        run: echo "Déploiement réussi sur la branche main !"
+        run: echo "Déploiement réussi sur la branche final !"
